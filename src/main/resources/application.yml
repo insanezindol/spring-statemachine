@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: state-machine-api
+
+  h2:
+    console:
+      enabled: true
+      path: /h2
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+        show_sql: true
+  #        format_sql: true
+
+  datasource:
+    hikari:
+      jdbc-url: jdbc:h2:mem://localhost/~/szs;MODE=MYSQL;DB_CLOSE_ON_EXIT=FALSE
+
+server:
+  port: 8080
+

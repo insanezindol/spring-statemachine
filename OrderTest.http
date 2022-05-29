@@ -1,0 +1,36 @@
+### https://github.com/hareeshav/springstatemachine-demo
+### https://medium.com/@hareesh.veduraj/spring-boot-using-spring-state-machine-1c5a6d35b9ad
+### 주문 목록 조회
+GET http://localhost:8080/orders/get-orders
+
+
+### 새로운 주문 생성
+POST http://localhost:8080/orders/new-orders
+Content-Type: application/json
+
+{
+    "name" : "rice",
+    "amount" : 100
+}
+
+
+### 주문 수락
+POST http://localhost:8080/orders/order-accept/1
+
+
+### 주문 거절
+POST http://localhost:8080/orders/order-denied/1
+
+
+### 배달 시작
+POST http://localhost:8080/orders/delivery-start/1
+
+
+### 배달 종료
+POST http://localhost:8080/orders/delivery-end/1
+
+
+### 완료
+POST http://localhost:8080/orders/complete/1
+
+
