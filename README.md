@@ -126,15 +126,3 @@ cd spring-statemachine
 
 -   IntelliJ IDEA 또는 Eclipse 사용 권장
 -   Lombok 플러그인 설치 필요
-
-## 기여하기
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 라이선스
-
-이 프로젝트는 MIT 라이선스 하에 배포됩니다.
