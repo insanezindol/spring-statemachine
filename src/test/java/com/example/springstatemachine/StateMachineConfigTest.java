@@ -9,8 +9,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Slf4j
@@ -39,28 +40,28 @@ class StateMachineConfigTest {
         Orders savedOrders = ordersService.newOrders(orders);
         long orderId = savedOrders.getId();
 
-        Orders checkedOrders = ordersRepository.getOne(orderId);
-        assert (OrdersState.NEW_ORDER == checkedOrders.getState());
+        Orders checkedOrders = ordersRepository.findById(orderId).orElseThrow();
+        assertThat(checkedOrders.getState()).isEqualTo(OrdersState.NEW_ORDER);
 
         // accept order
         ordersService.orderAccept(orderId);
-        checkedOrders = ordersRepository.getOne(orderId);
-        assert (OrdersState.ORDER_APPROVED == checkedOrders.getState());
+        checkedOrders = ordersRepository.findById(orderId).orElseThrow();
+        assertThat(checkedOrders.getState()).isEqualTo(OrdersState.ORDER_APPROVED);
 
         // start delivery
         ordersService.deliveryStart(orderId);
-        checkedOrders = ordersRepository.getOne(orderId);
-        assert (OrdersState.DELIVERY_START == checkedOrders.getState());
+        checkedOrders = ordersRepository.findById(orderId).orElseThrow();
+        assertThat(checkedOrders.getState()).isEqualTo(OrdersState.DELIVERY_START);
 
         // end delivery
         ordersService.deliveryEnd(orderId);
-        checkedOrders = ordersRepository.getOne(orderId);
-        assert (OrdersState.DELIVERY_END == checkedOrders.getState());
+        checkedOrders = ordersRepository.findById(orderId).orElseThrow();
+        assertThat(checkedOrders.getState()).isEqualTo(OrdersState.DELIVERY_END);
 
         // complete order
         ordersService.complete(orderId);
-        checkedOrders = ordersRepository.getOne(orderId);
-        assert (OrdersState.COMPLETE == checkedOrders.getState());
+        checkedOrders = ordersRepository.findById(orderId).orElseThrow();
+        assertThat(checkedOrders.getState()).isEqualTo(OrdersState.COMPLETE);
     }
 
 }

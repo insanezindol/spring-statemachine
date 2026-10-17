@@ -25,7 +25,7 @@ public class OrdersStateChangeInterceptor extends StateMachineInterceptorAdapter
         Optional.ofNullable(message).ifPresent(msg -> {
             Optional.ofNullable(Long.class.cast(msg.getHeaders().getOrDefault(OrdersService._ORDER_ID, -1L)))
                     .ifPresent(orderId -> {
-                        Orders orders = ordersRepository.getOne(orderId);
+                        Orders orders = ordersRepository.findById(orderId).orElseThrow();
                         orders.setState(state.getId());
                         ordersRepository.save(orders);
                     });

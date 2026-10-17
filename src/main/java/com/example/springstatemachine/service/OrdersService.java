@@ -12,8 +12,9 @@ import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -81,24 +82,24 @@ public class OrdersService {
 
     private StateMachine<OrdersState, OrdersEvent> build(Long orderId) {
         log.info("build : {}", orderId);
-        Orders orders = ordersRepository.getOne(orderId);
+        Orders orders = ordersRepository.findById(orderId).orElseThrow();
         StateMachine<OrdersState, OrdersEvent> sm = stateMachineFactory.getStateMachine(Long.toString(orders.getId()));
-        sm.stop();
+        sm.stopReactively().block();
         sm.getStateMachineAccessor()
                 .doWithAllRegions(sma -> {
                     sma.addStateMachineInterceptor(ordersStateChangeInterceptor);
-                    sma.resetStateMachine(new DefaultStateMachineContext<>(orders.getState(), null, null, null));
+                    sma.resetStateMachineReactively(new DefaultStateMachineContext<>(orders.getState(), null, null, null)).block();
                 });
-        sm.start();
+        sm.startReactively().block();
         return sm;
     }
 
     private void sendEvent(Long orderId, StateMachine<OrdersState, OrdersEvent> sm, OrdersEvent event) {
         log.info("sendEvent : {} , {} , {}", orderId, sm, event);
-        Message msg = MessageBuilder.withPayload(event)
+        Message<OrdersEvent> msg = MessageBuilder.withPayload(event)
                 .setHeader(_ORDER_ID, orderId)
                 .build();
-        sm.sendEvent(msg);
+        sm.sendEvent(Mono.just(msg)).blockLast();
     }
 
 }
